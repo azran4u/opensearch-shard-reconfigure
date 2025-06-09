@@ -9,13 +9,17 @@ import os
 
 
 # OpenSearch cluster URL
-elasticsearch_url = "https://vpc-alero-qa-1-l32rqdjyd567ba76iimggxmmom.us-east-1.es.amazonaws.com"
-source_template = "audit-v1"
+# elasticsearch_url = "https://vpc-alero-qa-1-l32rqdjyd567ba76iimggxmmom.us-east-1.es.amazonaws.com"
+# source_template = "audit-v1"
 target_template = "sharding_test_template"
 template_to_change = [target_template]
 
 def opensearch_url():
-    return os.environ.get('ELASTICSEARCH_URL', elasticsearch_url)
+    elasticsearch_url = os.environ.get('ELASTICSEARCH_URL')
+    if not elasticsearch_url:
+        raise ValueError("ELASTICSEARCH_URL environment variable is not set")
+    print(f"Using OpenSearch URL: {elasticsearch_url}")
+    return elasticsearch_url
 
 def run_command(command, parse_json=True):
     """Execute a shell command and return the result as parsed JSON or raw output"""
@@ -30,7 +34,7 @@ def run_command(command, parse_json=True):
 
 def opensearch_command(method, endpoint, data=None):
     """Run a command against the OpenSearch cluster"""
-    command = ["curl", "-s", "-X", method, f"{elasticsearch_url}/{endpoint}", "-H", "Content-Type: application/json"]
+    command = ["curl", "-s", "-X", method, f"{opensearch_url()}/{endpoint}", "-H", "Content-Type: application/json"]
     if data:
         command.extend(["-d", json.dumps(data)])
     
