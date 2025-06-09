@@ -10,6 +10,7 @@ import os
 
 # OpenSearch cluster URL
 # elasticsearch_url = "https://vpc-alero-qa-1-l32rqdjyd567ba76iimggxmmom.us-east-1.es.amazonaws.com"
+# os.environ.setdefault('ELASTICSEARCH_URL', 'https://vpc-alero-qa-1-l32rqdjyd567ba76iimggxmmom.us-east-1.es.amazonaws.com')
 # source_template = "audit-v1"
 target_template = "sharding_test_template"
 template_to_change = [target_template]
@@ -207,6 +208,8 @@ def main():
         # filter templates to those who start with one of the specified names in template_to_change
         templates = {k: v for k, v in templates.items() if k in template_to_change}
         
+        print(f"Found {len(templates)} templates to update: {', '.join(templates.keys())}")
+
         template_details = get_template_details(templates)
         
         # Display template information
